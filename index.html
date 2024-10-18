@@ -11,7 +11,7 @@
   <div class="container mt-5">
     <h4 class="mb-4">📝동탄3동 주민센터 후문 개방을 위한 주민 서명</h4>
     <h5>🤷‍♂️아래에 주소(동,호수) 및 성명을 입력 후 서명해 주세요</h5>
-    <form id="consentForm" method="POST" action="https://script.google.com/macros/s/AKfycbyz7MweUUZa-Qccj5bMt0CYPD2GQFU17j8ROrFTVPkTVs8xVN_P8WHm8G554FSroOD4/exec">
+    <form id="consentForm" method="POST" action="https://script.google.com/macros/s/AKfycbzS_q3dqsq4WRI_oXBhpxsMSe1YMW8URacmLEucV_rHFgcFa47PXJpsKU5MrHYkeqv2/exec">
       <div class="form-group">
         <input type="text" class="form-control" placeholder="동, 호수" id="name" name="name" required>
       </div>
@@ -38,7 +38,7 @@
     const participantCount = document.getElementById('participantCount');
 
     document.addEventListener('DOMContentLoaded', function() {
-      fetch('https://script.google.com/macros/s/AKfycbyz7MweUUZa-Qccj5bMt0CYPD2GQFU17j8ROrFTVPkTVs8xVN_P8WHm8G554FSroOD4/exec')
+      fetch('https://script.google.com/macros/s/AKfycbzS_q3dqsq4WRI_oXBhpxsMSe1YMW8URacmLEucV_rHFgcFa47PXJpsKU5MrHYkeqv2/exec')
         .then(response => response.json())
         .then(data => {
           if (data.totalParticipants) {
@@ -79,7 +79,7 @@
       const signatureData = signaturePad.toDataURL('image/png');
       formData.append('signature', signatureData);
 
-      fetch('https://script.google.com/macros/s/AKfycbyz7MweUUZa-Qccj5bMt0CYPD2GQFU17j8ROrFTVPkTVs8xVN_P8WHm8G554FSroOD4/exec', {
+      fetch('https://script.google.com/macros/s/AKfycbzS_q3dqsq4WRI_oXBhpxsMSe1YMW8URacmLEucV_rHFgcFa47PXJpsKU5MrHYkeqv2/exec', {
         method: 'POST',
         body: formData
       })
