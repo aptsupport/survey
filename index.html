@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <title>📝동탄3동 주민센타 1층로비 후문개방을 위한 주민서명</title>
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/signature_pad@2.3.2/dist/signature_pad.min.js"></script>
+</head>
+<body>
+  <div class="container mt-5">
+    <h4 class="mb-4">📝동탄3동 주민센타 1층로비 후문개방을 위한 주민서명</h4>
+    <h5>🤷‍♂️아래에 주소(동,호수) 및 성명을 입력후 서명해 주세요</h5>
+    <form id="consentForm" method="post" action="https://script.google.com/macros/s/AKfycbyz7MweUUZa-Qccj5bMt0CYPD2GQFU17j8ROrFTVPkTVs8xVN_P8WHm8G554FSroOD4/exec">
+      <div class="form-group">
+        <input type="text" class="form-control" placeholder="동,호수만 입력하세요" id="name" name="name" required>
+      </div>
+      <div class="form-group">
+        <input type="text" class="form-control" id="contact" placeholder="성명을 입력하세요" name="contact" required>
+      </div>
+      <div class="form-group">
+        <h5>📌서명을 위한 개인정보(성명,주소,서명)수집.활용에 동의 합니다.</h5>
+        <label for="signature">📝서명</label>
+        <canvas id="signaturePad" class="border" width="300" height="180" style="background-color: #f0f0f0; border: 1px solid #ccc;"></canvas>
+        <button type="button" class="btn btn-secondary mt-2" onclick="clearSignature()">↩️</button>
+      </div>
+      <button type="submit" class="btn btn-primary btn-block" id="submitBtn">✔️제출 하기</button>
+    </form>
+    <br>
+    <p id="participantCount" class="text-muted">✨현재 총 참가 인원 : 🔄집계중...</p> <!-- 총 참가 인원 표시 영역 -->
+  </div>
+  <script>
+    const canvas = document.getElementById('signaturePad');
+    const signaturePad = new SignaturePad(canvas);
+    const submitBtn = document.getElementById('submitBtn');
+    const consentForm = document.getElementById('consentForm');
+    const participantCount = document.getElementById('participantCount');
+
+    document.addEventListener('DOMContentLoaded', function() {
+      fetch('https://script.google.com/macros/s/AKfycbyz7MweUUZa-Qccj5bMt0CYPD2GQFU17j8ROrFTVPkTVs8xVN_P8WHm8G554FSroOD4/exec')
+        .then(response => response.json())
+        .then(data => {
+          if (data.totalParticipants) {
+            participantCount.textContent = `✨현재 총 참가 인원 :  ${data.totalParticipants}명`;
+          }
+        })
+        .catch(error => {
+          console.error('⚠️ 참가 인원을 불러오는 중 오류가 발생했습니다:', error);
+        });
+    }); 
+
+    function clearSignature() {
+      signaturePad.clear();
+    }
+
+    consentForm.addEventListener('submit', function(event) {
+      event.preventDefault();
+
+      const name = document.getElementById('name').value;
+      const contact = document.getElementById('contact').value;
+
+      if (signaturePad.isEmpty()) {
+        alert('📝서명을 입력해 주세요.');
+        return;
+      }
+
+      const confirmationMessage = `입력한 내용을 확인해 주세요:\n\n주소: ${name}\n성명: ${contact}\n\n이대로 제출하시겠습니까?`;
+
+      if (!confirm(confirmationMessage)) {
+        return;
+      }
+
+      alert('🤷‍♂️제출중입니다. 잠시만 기다려주세요');
+      submitBtn.disabled = true;
+      submitBtn.textContent = "🔂 제출중...잠시만 기다려 주세요";
+
+      const formData = new FormData(event.target);
+      const signatureData = signaturePad.toDataURL('image/png');
+      formData.append('signature', signatureData);
+
+      fetch('https://script.google.com/macros/s/AKfycbyz7MweUUZa-Qccj5bMt0CYPD2GQFU17j8ROrFTVPkTVs8xVN_P8WHm8G554FSroOD4/exec', {
+        method: 'POST',
+        body: formData
+      })
+      .then(response => response.json())
+      .then(data => {
+        alert(data.message);
+        if (data.totalParticipants) {
+          participantCount.textContent = `✨현재 총 서명참가 인원 :  ${data.totalParticipants} 명`;
+        }
+        setTimeout(() => {
+          consentForm.reset();
+          signaturePad.clear();
+          submitBtn.disabled = false;
+          submitBtn.textContent = "✔️제출하기";
+        }, 1000);
+      })
+      .catch(error => {
+        alert('⚠️제출중 오류가 발생했습니다. 다시한번 시도해 주세요.');
+        submitBtn.disabled = false;
+        submitBtn.textContent = "✔️제출하기";
+      });
+    });
+  </script>
+</body>
+</html>
